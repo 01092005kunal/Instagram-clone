@@ -2,6 +2,8 @@ import { Box, Flex } from '@chakra-ui/react'
 import { useLocation } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar/Sidebar'
 
+// instead of adding the sidebar to each and every page or a component itself , we can add it only once to the page layoout component and wrap it with the children with it . This way , we can have a Sdebar on every page except the AuthPage As per the conditioon passed...
+
 const PageLayouts = ({children}) => {
     const {pathname} = useLocation()
   return (
