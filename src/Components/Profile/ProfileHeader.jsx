@@ -34,7 +34,7 @@ const ProfileHeader = () => {
           w={"full"}
           gap={12}
         >
-          <Text fontSize={{ base: "sm", md: "lg" }}>asaprogrammer_</Text>
+          <Text fontSize={{ base: "sm", md: "lg" }}>Kunal_01</Text>
 
           <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
             <Button
@@ -69,7 +69,7 @@ const ProfileHeader = () => {
         </Flex>
         <Flex>
           <Text fontSize={"sm"} fontWeight={"bold"}>
-            As a Programmer
+            Kunal Mhatre
           </Text>
         </Flex>
         <Text fontSize={"sm"}>Instagram clone for project</Text>
