@@ -1,10 +1,15 @@
-import { Box, Flex, Link, Tooltip, Avatar } from "@chakra-ui/react"  
+import { Box, Flex, Link, Tooltip, Avatar, useDisclosure } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
 import { CreatePostLogo, InstagramLogo, InstagramMobileLogo, NotificationsLogo, SearchLogo } from "../../assets/constants"
 import { AiFillHome } from "react-icons/ai"
 import { BiLogOut } from "react-icons/bi"
+import { useAuth } from "../../context/AuthContext"
+import CreatePostModal from "./CreatePostModal"
 
 const Sidebar = () => {
+  const { signOut, userProfile } = useAuth()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const sidebarItems = [
     {
       icon: <AiFillHome size={25} />,
@@ -24,42 +29,50 @@ const Sidebar = () => {
     {
       icon: <CreatePostLogo />,
       text: "Create",
-      link: null
+      action: onOpen,
     },
     {
-      icon: <Avatar size={"sm"} name="Kunal Mhatre" src="/profilepic.png" />,
+      icon: <Avatar size={"sm"} name={userProfile?.full_name || userProfile?.username || "User"} src={userProfile?.profile_pic_url || "/profilepic.png"} />,
       text: "Profile",
-      link: "/asaprogrammer",
+      link: userProfile?.username ? `/${userProfile.username}` : "/asaprogrammer",
     },
   ]
 
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (err) {
+      console.error("Logout error:", err.message)
+    }
+  }
+
   return (
-    <Box 
-      height="100vh" 
-      borderRight="1px solid" 
-      borderColor="whiteAlpha.300" 
-      py={8} 
-      position="sticky" 
-      top={0} 
-      left={0} 
+    <Box
+      height="100vh"
+      borderRight="1px solid"
+      borderColor="whiteAlpha.300"
+      py={8}
+      position="sticky"
+      top={0}
+      left={0}
       px={{ base: 2, md: 4 }}
     >
       <Flex direction="column" gap={10} w="full" height="full">
-        <Link 
+        <Link
           as={RouterLink}
-          to="/" 
-          pl={2} 
-          display={{ base: "none", md: "block" }} 
+          to="/"
+          pl={2}
+          display={{ base: "none", md: "block" }}
           cursor="pointer"
         >
           <InstagramLogo />
         </Link>
 
-        <Link 
+        <Link
           as={RouterLink}
-          to="/" 
-          pl={2} 
-          display={{ base: "block", md: "none" }} 
+          to="/"
+          pl={2}
+          display={{ base: "block", md: "none" }}
           borderRadius={6}
           _hover={{ bg: "whiteAlpha.200" }}
           w={10}
@@ -70,7 +83,7 @@ const Sidebar = () => {
 
         <Flex direction="column" gap={5} cursor="pointer">
           {sidebarItems.map((item, index) => (
-            <Tooltip 
+            <Tooltip
               key={index}
               label={item.text}
               placement="right"
@@ -99,6 +112,7 @@ const Sidebar = () => {
                 </Link>
               ) : (
                 <Flex
+                  onClick={item.action}
                   display="flex"
                   alignItems="center"
                   gap={4}
@@ -127,9 +141,8 @@ const Sidebar = () => {
           openDelay={500}
           display={{ base: "block", md: "none" }}
         >
-          <Link
-            as={RouterLink}
-            to="/auth"
+          <Flex
+            onClick={handleLogout}
             display="flex"
             alignItems="center"
             gap={4}
@@ -143,9 +156,12 @@ const Sidebar = () => {
           >
             <BiLogOut size={25} />
             <Box display={{ base: "none", md: "block" }}>Logout</Box>
-          </Link>
+          </Flex>
         </Tooltip>
       </Flex>
+
+      {/* CREATE POST MODAL */}
+      <CreatePostModal isOpen={isOpen} onClose={onClose} />
     </Box>
   )
 }

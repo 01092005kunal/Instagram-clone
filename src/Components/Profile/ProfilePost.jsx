@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { AiFillHeart } from "react-icons/ai";
@@ -19,9 +20,57 @@ import { FaComment } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { Comment } from "../Comment/Comment";
 import PostFooter from "../FeedPosts/PostFooter";
+import { useAuth } from "../../context/AuthContext";
+import { supabase } from "../../Supabase/client";
+import { useState } from "react";
 
-const ProfilePost = ({ img }) => {
+const ProfilePost = ({ post, img, onPostDeleted }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useAuth();
+  const toast = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const displayImg = post?.image_url || img;
+  const username = post?.users?.username || "user";
+  const avatar = post?.users?.profile_pic_url || "/profilepic.png";
+  const likesCount = post?.likes?.length || 0;
+  const commentsCount = post?.comments?.length || 0;
+  const isOwner = user && post && user.id === post.user_id;
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", post.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      onClose();
+      onPostDeleted?.(post.id);
+      window.dispatchEvent(new Event("post-created"));
+    } catch (err) {
+      toast({
+        title: "Error deleting post",
+        description: err.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
       <GridItem
@@ -48,24 +97,24 @@ const ProfilePost = ({ img }) => {
           justifyContent={"center"}
         >
           <Flex alignItems={"center"} justifyContent={"center"} gap={50}>
-            <Flex>
+            <Flex align={"center"}>
               <AiFillHeart size={20} />
               <Text fontWeight={"bold"} ml={2}>
-                7
+                {likesCount}
               </Text>
             </Flex>
-            <Flex>
+            <Flex align={"center"}>
               <FaComment size={20} />
               <Text fontWeight={"bold"} ml={2}>
-                7
+                {commentsCount}
               </Text>
             </Flex>
           </Flex>
         </Flex>
 
         <Image
-          src={img}
-          alt="profile posts"
+          src={displayImg}
+          alt="profile post"
           w={"100%"}
           h={"100%"}
           objectFit={"cover"}
@@ -86,6 +135,7 @@ const ProfilePost = ({ img }) => {
               gap="4"
               w={{ base: "90%", sm: "70%", md: "full" }}
               mx={"auto"}
+              maxH={"90vh"}
             >
               <Box
                 borderRadius={4}
@@ -93,34 +143,39 @@ const ProfilePost = ({ img }) => {
                 border={"1px solid"}
                 borderColor={"whiteAlpha.300"}
                 flex={1.5}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                bg={"black"}
               >
-                <Image src={img} alt="profile post" />
+                <Image src={displayImg} alt="profile post" maxH={"600px"} objectFit={"contain"} />
               </Box>
               <Flex
                 flex={1}
                 flexDir={"column"}
-                px={10}
+                px={6}
                 display={{ base: "none", md: "flex" }}
               >
                 <Flex alignItems={"center"} justifyContent={"space-between"}>
                   <Flex alignItems={"center"} gap={4}>
-                    <Avatar
-                      src="/profilepic.png"
-                      size={"sm"}
-                      name="As a Programmer"
-                    />
-                    <Text fontWeight={"bold"} fontSize={12}>
-                      kunal_01
+                    <Avatar src={avatar} size={"sm"} name={username} />
+                    <Text fontWeight={"bold"} fontSize={14}>
+                      {username}
                     </Text>
                   </Flex>
 
-                  <Box
-                    _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
-                    borderRadius={4}
-                    p={1}
-                  >
-                    <MdDelete size={20} cursor={"pointer"} />
-                  </Box>
+                  {isOwner && (
+                    <Box
+                      _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                      borderRadius={4}
+                      p={1}
+                      cursor={"pointer"}
+                      onClick={isDeleting ? undefined : handleDelete}
+                      opacity={isDeleting ? 0.5 : 1}
+                    >
+                      <MdDelete size={20} />
+                    </Box>
+                  )}
                 </Flex>
                 <Divider my={4} bg={"gray.500"} />
                 <VStack
@@ -128,155 +183,30 @@ const ProfilePost = ({ img }) => {
                   alignItems={"start"}
                   maxH={"350px"}
                   overflowY={"auto"}
+                  spacing={3}
                 >
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Dummy images from unsplash"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Nice Pic"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="kunal_01"
-                    profilePic="/profilepic.png"
-                    text={"Good clone dude!!"}
-                  />
+                  {post?.caption && (
+                    <Comment
+                      createdAt="Just now"
+                      username={username}
+                      profilePic={avatar}
+                      text={post.caption}
+                    />
+                  )}
+
+                  {post?.comments?.map((c, idx) => (
+                    <Comment
+                      key={c.id || idx}
+                      createdAt="Recently"
+                      username={c.users?.username || "user"}
+                      profilePic={c.users?.profile_pic_url || "/profilepic.png"}
+                      text={c.text}
+                    />
+                  ))}
                 </VStack>
 
                 <Divider my={4} bg={"gray.800"} />
-                <PostFooter isProfilePage={true} />
+                <PostFooter post={post} isProfilePage={true} />
               </Flex>
             </Flex>
           </ModalBody>
