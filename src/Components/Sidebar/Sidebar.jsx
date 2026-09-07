@@ -1,6 +1,6 @@
 import { Box, Flex, Link, Tooltip, Avatar, useDisclosure } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
-import { CreatePostLogo, InstagramLogo, InstagramMobileLogo, NotificationsLogo, SearchLogo } from "../../assets/constants"
+import { CreatePostLogo, InstagramLogo, InstagramMobileLogo, MessagesLogo, NotificationsLogo, SearchLogo, ReelsLogo } from "../../assets/constants"
 import { AiFillHome } from "react-icons/ai"
 import { BiLogOut } from "react-icons/bi"
 import { useAuth } from "../../context/AuthContext"
@@ -18,8 +18,18 @@ const Sidebar = () => {
     },
     {
       icon: <SearchLogo />,
-      text: "Search",
-      link: null
+      text: "Explore",
+      link: "/explore"
+    },
+    {
+      icon: <ReelsLogo />,
+      text: "Reels",
+      link: "/reels"
+    },
+    {
+      icon: <MessagesLogo />,
+      text: "Messages",
+      link: "/direct"
     },
     {
       icon: <NotificationsLogo />,

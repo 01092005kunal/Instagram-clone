@@ -1,12 +1,15 @@
-import { Alert, AlertIcon, Box, Button, Flex, Image, Input, Text, VStack } from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, Button, Flex, Image, Input, InputGroup, InputRightElement, Text, VStack } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const navigate = useNavigate()
   const { signIn, signUp } = useAuth()
 
@@ -87,22 +90,50 @@ const AuthForm = () => {
             </>
           )}
 
-          <Input
-            placeholder="Password"
-            fontSize={14}
-            type="password"
-            value={inputs.password}
-            onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
-          />
+          <InputGroup size="md">
+            <Input
+              placeholder="Password"
+              fontSize={14}
+              type={showPassword ? "text" : "password"}
+              value={inputs.password}
+              onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+            />
+            <InputRightElement h={"full"}>
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                onClick={() => setShowPassword((prev) => !prev)}
+                _hover={{ bg: "transparent" }}
+                color={"gray.400"}
+                p={0}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
 
           {!isLogin && (
-            <Input
-              placeholder="Confirm Password"
-              value={inputs.confirmPassword}
-              onChange={(e) => setInputs({ ...inputs, confirmPassword: e.target.value })}
-              fontSize={14}
-              type="password"
-            />
+            <InputGroup size="md">
+              <Input
+                placeholder="Confirm Password"
+                value={inputs.confirmPassword}
+                onChange={(e) => setInputs({ ...inputs, confirmPassword: e.target.value })}
+                fontSize={14}
+                type={showConfirmPassword ? "text" : "password"}
+              />
+              <InputRightElement h={"full"}>
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  _hover={{ bg: "transparent" }}
+                  color={"gray.400"}
+                  p={0}
+                >
+                  {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
           )}
 
           {error && (

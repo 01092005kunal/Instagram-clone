@@ -127,6 +127,7 @@ const ProfilePage = () => {
             setIsFollowing(newStatus);
             setFollowersCount((prev) => (newStatus ? prev + 1 : Math.max(0, prev - 1)));
           }}
+          onProfileUpdated={fetchProfileData}
         />
       </Flex>
       <Flex

@@ -5,10 +5,12 @@ import {
   Flex,
   Text,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../Supabase/client";
+import EditProfileModal from "./EditProfileModal";
 
 const ProfileHeader = ({
   profileUser,
@@ -17,9 +19,11 @@ const ProfileHeader = ({
   followingCount = 0,
   isFollowing = false,
   onFollowChange,
+  onProfileUpdated,
 }) => {
   const { user } = useAuth();
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isOwnProfile = user && profileUser && user.id === profileUser.id;
 
@@ -82,6 +86,7 @@ const ProfileHeader = ({
                 color={"black"}
                 _hover={{ bg: "whiteAlpha.800" }}
                 size={{ base: "xs", md: "sm" }}
+                onClick={onOpen}
               >
                 Edit Profile
               </Button>
@@ -136,6 +141,15 @@ const ProfileHeader = ({
           </Text>
         )}
       </VStack>
+
+      {/* Edit Profile Modal */}
+      {isOwnProfile && (
+        <EditProfileModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onProfileUpdated={onProfileUpdated}
+        />
+      )}
     </Flex>
   );
 };
