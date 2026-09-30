@@ -9,7 +9,7 @@ const Feedpost = ({ post, img, username, avatar }) => {
 
   return (
     <>
-      <PostHeader username={displayUsername} avatar={displayAvatar} />
+      <PostHeader post={post} username={displayUsername} avatar={displayAvatar} />
       <Box my={2} borderRadius={5} overflow={"hidden"} maxH={"600px"} bg={"black"}>
         <Image src={displayImg} alt={displayUsername} w={"full"} objectFit={"cover"} />
       </Box>
