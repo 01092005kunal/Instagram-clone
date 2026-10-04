@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../Supabase/client";
 import EditProfileModal from "./EditProfileModal";
+import FollowListModal from "./FollowListModal";
 
 const ProfileHeader = ({
   profileUser,
@@ -23,6 +24,7 @@ const ProfileHeader = ({
 }) => {
   const { user } = useAuth();
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [followModalType, setFollowModalType] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isOwnProfile = user && profileUser && user.id === profileUser.id;
@@ -113,13 +115,25 @@ const ProfileHeader = ({
             </Text>
             posts
           </Text>
-          <Text fontSize={{ base: "xs", md: "sm" }}>
+          <Text
+            fontSize={{ base: "xs", md: "sm" }}
+            cursor={"pointer"}
+            _hover={{ color: "gray.400" }}
+            transition={"color 0.2s"}
+            onClick={() => setFollowModalType("followers")}
+          >
             <Text as="span" fontWeight={"bold"} mr={1}>
               {followersCount}
             </Text>
             followers
           </Text>
-          <Text fontSize={{ base: "xs", md: "sm" }}>
+          <Text
+            fontSize={{ base: "xs", md: "sm" }}
+            cursor={"pointer"}
+            _hover={{ color: "gray.400" }}
+            transition={"color 0.2s"}
+            onClick={() => setFollowModalType("following")}
+          >
             <Text as="span" fontWeight={"bold"} mr={1}>
               {followingCount}
             </Text>
@@ -148,6 +162,16 @@ const ProfileHeader = ({
           isOpen={isOpen}
           onClose={onClose}
           onProfileUpdated={onProfileUpdated}
+        />
+      )}
+
+      {/* Followers & Following Modal */}
+      {followModalType && (
+        <FollowListModal
+          isOpen={!!followModalType}
+          onClose={() => setFollowModalType(null)}
+          userId={profileUser?.id}
+          type={followModalType}
         />
       )}
     </Flex>
