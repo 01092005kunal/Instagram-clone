@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Clone — Presentation & Speaker Notes</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --primary: #0095f6;
+      --primary-dark: #0074cc;
+      --bg: #0f1117;
+      --card-bg: #1a1d27;
+      --border: #2a2e3d;
+      --text: #f0f2f5;
+      --text-muted: #9aa0a6;
+      --accent: #10b981;
+      --quote-bg: rgba(0, 149, 246, 0.08);
+      --quote-border: #0095f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Print & Save Button Bar (Hidden in Print) */
+    .action-bar {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      background: rgba(26, 29, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .action-bar h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .btn-print {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-print:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Header Banner */
+    .project-header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .project-header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .project-header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .meta-badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* Slide Card */
+    .slide-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide-number {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      background: rgba(0, 149, 246, 0.1);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 0.6rem;
+    }
+
+    .slide-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .bullet-points h4,
+    .speech-box h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .bullet-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: 1.4rem;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+
+    .bullet-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0.4rem;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Speech Notes Box */
+    .speech-box {
+      background: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 10px 10px 0;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1rem;
+    }
+
+    .speech-text {
+      font-size: 1rem;
+      color: #ffffff;
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .speech-text strong {
+      color: #38bdf8;
+      font-style: normal;
+    }
+
+    /* Architecture ASCII / Code Box */
+    pre {
+      background: #0b0d13;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin-top: 0.8rem;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111827 !important;
+        padding: 0 !important;
+      }
+
+      .action-bar {
+        display: none !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+      }
+
+      .project-header {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #111827 !important;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .project-header h1 {
+        background: none !important;
+        -webkit-text-fill-color: #111827 !important;
+        color: #111827 !important;
+      }
+
+      .project-header p,
+      .slide-subtitle {
+        color: #4b5563 !important;
+      }
+
+      .badge {
+        border-color: #cbd5e1 !important;
+        color: #111827 !important;
+      }
+
+      .slide-card {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #111827 !important;
+        box-shadow: none !important;
+        margin-bottom: 0 !important;
+        padding: 2.5cm 2cm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+
+      .slide-title {
+        color: #0f172a !important;
+      }
+
+      .bullet-list li {
+        color: #1f2937 !important;
+      }
+
+      .speech-box {
+        background: #f0f9ff !important;
+        border-left: 4px solid #0284c7 !important;
+      }
+
+      .speech-text {
+        color: #0f172a !important;
+      }
+
+      .speech-text strong {
+        color: #0369a1 !important;
+      }
+
+      pre {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #0f172a !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Action Bar for Printing -->
+    <div class="action-bar">
+      <div>
+        <h1>📄 Instagram Clone Presentation & Speaker Notes</h1>
+        <p style="font-size: 0.8rem; color: #9aa0a6;">Ready to print or save as PDF</p>
+      </div>
+      <button class="btn-print" onclick="window.print()">
+        🖨️ Save as PDF / Print
+      </button>
+    </div>
+
+    <!-- Cover Page -->
+    <div class="project-header">
+      <h1>Instagram Web Clone</h1>
+      <p>Microservices & Full-Stack Social Architecture</p>
+      <div class="meta-badges">
+        <span class="badge">Developer: Kunal Mhatre</span>
+        <span class="badge">Live: socialgram-kunal.vercel.app</span>
+        <span class="badge">Stack: React 19 • Supabase • Vercel</span>
+      </div>
+    </div>
+
+    <!-- Slide 1 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 1 of 12</span>
+      <h2 class="slide-title">Title & Introduction</h2>
+      <p class="slide-subtitle">Full-Stack Instagram Clone: Real-Time Social Media Architecture</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Project:</strong> Full-Stack Instagram Clone with Microservices-style architecture.</li>
+            <li><strong>Developer:</strong> Kunal Mhatre.</li>
+            <li><strong>Tech Stack:</strong> React 19, Vite, Chakra UI, Supabase (PostgreSQL), WebSockets, Vercel.</li>
+            <li><strong>Live Deployment:</strong> Deployed with automated CI/CD and custom production domain.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Good morning/afternoon everyone. Today, I am excited to present my project: a <strong>Full-Stack Instagram Clone</strong> built to replicate the core distributed architecture of modern social platforms. Rather than creating a simple static frontend, the objective was to solve real-world engineering problems: managing cloud object storage pipelines, handling relational social graphs, and delivering sub-second real-time messaging."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 2 of 12</span>
+      <h2 class="slide-title">Why Microservices? (Monolith vs. Microservices)</h2>
+      <p class="slide-subtitle">Modular Architecture for High Availability and Scalability</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Monolithic Risks:</strong> Single failure point—if messaging or media crashes, the entire platform goes down.</li>
+            <li><strong>Decoupled Services:</strong> Identity, Post Creation, Newsfeed, Follower Graph, and Messaging operate independently.</li>
+            <li><strong>Fault Tolerance & Scaling:</strong> Heavy video streaming does not bottleneck database operations or user authentication.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "In traditional monolithic web applications, tightly coupled features create a single point of failure. In our architecture, we decoupled key domain boundaries: <strong>Identity & Profiles, Cloud Media Storage, Feed Generation, the Relational Social Graph, and Real-Time Messaging</strong>. This design ensures modular maintenance, fault tolerance, and independent scalability."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 3 of 12</span>
+      <h2 class="slide-title">High-Level System Architecture</h2>
+      <p class="slide-subtitle">Cloud-Native Client-Server Overview</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Architecture Pipeline</h4>
+          <pre>
+[Client: React 19 + Vite] ──(HTTPS & WebSockets)──> [Supabase Cloud BaaS]
+  ├── Edge Hosting (Vercel)                           ├── GoTrue JWT Authentication
+  └── Reactive UI (Chakra)                            ├── PostgreSQL Relational DB
+                                                      ├── Realtime WebSocket Server
+                                                      └── S3 Object Storage Bucket
+          </pre>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Looking at our high-level architecture: the client is a reactive Single Page Application built with <strong>React 19 and Vite</strong>, deployed on Vercel's global edge network. The frontend communicates via HTTPS APIs and persistent WebSockets with our <strong>Supabase backend layer</strong>, which orchestrates a PostgreSQL relational database, S3-compatible cloud storage, and low-latency WebSocket broadcasting."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 4 of 12</span>
+      <h2 class="slide-title">Service 1: User Profiles & Identity</h2>
+      <p class="slide-subtitle">Authentication, Dynamic Routing & Self-Service Management</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Authentication:</strong> Secure JWT tokens, encrypted password hashing, and session persistence via Supabase GoTrue.</li>
+            <li><strong>Dynamic Routing:</strong> Deep-linkable profile URLs (<code>/:username</code>).</li>
+            <li><strong>Real-Time Aggregations:</strong> Dynamic post counts, follower counts, and following counts.</li>
+            <li><strong>Edit Profile Modal:</strong> Live updating of bio, full name, username, and custom avatar upload to cloud storage.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Our first service is <strong>User Profiles and Identity</strong>. It manages user signup and sign-in with JWT authentication. Each user has a unique dynamic route. The profile header calculates social stats in real time and features a complete <strong>Edit Profile modal</strong> that uploads avatars directly to cloud storage and syncs profile changes instantly."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 5 of 12</span>
+      <h2 class="slide-title">Service 2: Post Creation & Media Storage</h2>
+      <p class="slide-subtitle">Direct Cloud Storage Pipeline & Relational Linking</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Direct-to-Bucket Pipeline:</strong> High-res images upload to Supabase Storage (<code>instagram-bucket</code>) with unique timestamped hashes.</li>
+            <li><strong>Lightweight Database:</strong> PostgreSQL stores only the public CDN image URL and post metadata.</li>
+            <li><strong>Instant Feed Notification:</strong> Global event dispatches immediately upon post creation to trigger zero-lag feed updates.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Our second service is <strong>Post Creation and Media Storage</strong>. Storing heavy images in a standard database bottlenecks performance. Our upload pipeline streams images directly into an <strong>S3-compatible cloud storage bucket</strong>, storing only the optimized public CDN URL in PostgreSQL. Once published, an event immediately signals the feed to refresh."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 6 of 12</span>
+      <h2 class="slide-title">Service 3: Newsfeed Generation</h2>
+      <p class="slide-subtitle">Relational Feed Aggregation & Optimistic Micro-actions</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Relational Query:</strong> Joins posts, authors, nested comments, and like records in a single optimized database round-trip.</li>
+            <li><strong>Perceived Performance:</strong> Chakra UI pulsing skeleton loaders prevent layout shift during data fetching.</li>
+            <li><strong>Dynamic Post Timestamps:</strong> Relative time formatting calculated on the fly (<code>• just now</code>, <code>• 2h</code>, <code>• 3d</code>).</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Our third service is <strong>Newsfeed Generation</strong>. In a single round-trip query, the service joins posts with their author details, comments, and like counts. We implemented animated skeleton loaders for smooth UX, and dynamic timestamps that calculate relative post age automatically."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 7 of 12</span>
+      <h2 class="slide-title">Service 4: Relational Social Graphs</h2>
+      <p class="slide-subtitle">Complex Follower-Following Mapping with Instant State Sync</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>Directional Graph:</strong> Relational <code>followers</code> table linking <code>follower_id</code> to <code>following_id</code>.</li>
+            <li><strong>Instant State Sync:</strong> Optimistic UI updates toggle buttons between Follow and Unfollow with immediate counter adjustment.</li>
+            <li><strong>Dynamic Suggested Users:</strong> Homepage sidebar queries real non-followed users directly from PostgreSQL.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "The fourth service is our <strong>Relational Social Graph</strong>. Unlike symmetric friendship models, Instagram uses a directional graph: User A can follow User B without User B following back. We implemented this using a relational <code>followers</code> table with instant state synchronization, allowing one-click follow and unfollow toggling across the home feed and profiles."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 8 of 12</span>
+      <h2 class="slide-title">Service 5: Real-Time Events & Direct Messaging</h2>
+      <p class="slide-subtitle">Sub-100ms Bi-directional Messaging Replacing HTTP Polling</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>WebSockets over Polling:</strong> Eliminates continuous server requests; maintains a persistent two-way socket tunnel.</li>
+            <li><strong>PostgreSQL WAL Integration:</strong> Database Write-Ahead Logs trigger instant message broadcasting.</li>
+            <li><strong>Sub-100ms Latency:</strong> New messages appear on recipient screens in under a tenth of a second without page reloads.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Our fifth service is <strong>Real-Time Direct Messaging</strong>. Traditionally, web applications relied on HTTP polling—repeatedly asking the server every two seconds for updates. We replaced polling with <strong>persistent bi-directional WebSockets via Supabase Realtime</strong>. When a user sends a message, PostgreSQL broadcasts the write event immediately, delivering messages to the recipient's screen in under 100 milliseconds."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 9 of 12</span>
+      <h2 class="slide-title">Service 6: Vertical Reels Player & Explore Grid</h2>
+      <p class="slide-subtitle">Native Snap-Scroll & Resource-Optimized Video Playback</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Slide Bullet Points</h4>
+          <ul class="bullet-list">
+            <li><strong>CSS Scroll-Snap:</strong> Seamless vertical snapping using <code>scroll-snap-type: y mandatory</code>.</li>
+            <li><strong>IntersectionObserver Autoplay:</strong> Automatically plays videos only when >50% visible, pausing off-screen reels to conserve memory and bandwidth.</li>
+            <li><strong>Explore Staggered Grid:</strong> Alternates 1×1 square posts with 1×2 tall video previews, featuring live search filtering.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "To replicate modern video engagement, we built a <strong>vertical snap-scrolling Reels player</strong> and a staggered 3-column Explore grid. To prevent browser lag and save mobile data, our Reels player uses <strong>IntersectionObserver</strong> to automatically play only the reel currently in the viewport, pausing off-screen videos instantly."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 10 of 12</span>
+      <h2 class="slide-title">Database Architecture & Row Level Security (RLS)</h2>
+      <p class="slide-subtitle">PostgreSQL Relational Schema & Engine-Level Privacy</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>PostgreSQL Relational Tables</h4>
+          <ul class="bullet-list">
+            <li><code>users</code>, <code>posts</code>, <code>comments</code>, <code>likes</code>, <code>followers</code>, <code>conversations</code>, <code>messages</code>.</li>
+            <li><strong>Database-Level Security (RLS):</strong> SQL policies enforce data privacy directly at the database engine level (e.g. users can only read messages where <code>auth.uid() = sender_id OR auth.uid() = recipient_id</code>).</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Security is handled directly at the database layer using <strong>PostgreSQL Row Level Security</strong>. Rather than trusting client code, every database query verifies <code>auth.uid()</code> at the database engine level. This guarantees that private messages and conversations cannot be accessed by unauthorized users."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 11 of 12</span>
+      <h2 class="slide-title">Engineering Challenges Overcome</h2>
+      <p class="slide-subtitle">Real-World Problem Solving & Architecture Decisions</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Key Engineering Solutions</h4>
+          <ul class="bullet-list">
+            <li><strong>Firebase to Supabase Migration:</strong> Converted unstructured NoSQL documents into structured relational PostgreSQL schemas with foreign key integrity.</li>
+            <li><strong>Browser Autoplay Restrictions:</strong> Synchronized DOM mute properties with React state to comply with strict Chrome/Edge autoplay policies.</li>
+            <li><strong>Vercel SPA 404 Resolution:</strong> Implemented <code>vercel.json</code> rewrites to ensure deep routing (<code>/explore</code>, <code>/reels</code>, <code>/:username</code>) never 404s on page refresh.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "Building this project gave me hands-on experience solving complex edge cases: <strong>migrating from Firebase NoSQL to PostgreSQL</strong>, overcoming browser autoplay security sandbox restrictions, and configuring edge routing rules on Vercel to support deep Single Page Application links."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 12 -->
+    <div class="slide-card">
+      <span class="slide-number">Slide 12 of 12</span>
+      <h2 class="slide-title">Conclusion & Live Demonstration</h2>
+      <p class="slide-subtitle">Summary, Future Roadmap & Open for Q&A</p>
+      <div class="content-grid">
+        <div class="bullet-points">
+          <h4>Future Roadmap</h4>
+          <ul class="bullet-list">
+            <li>24-Hour Ephemeral Stories with countdown rings.</li>
+            <li>Group Direct Messaging and Audio Voice Notes.</li>
+            <li>End-to-End Encryption (E2EE) for private chats.</li>
+          </ul>
+        </div>
+        <div class="speech-box">
+          <h4>🗣️ Word-for-Word Speaker Notes</h4>
+          <p class="speech-text">
+            "To conclude, this project demonstrates end-to-end full-stack proficiency: from reactive UI design in React and Chakra UI, to database modeling in PostgreSQL, cloud media pipelines, real-time WebSockets, and edge deployment on Vercel. <strong>Thank you for your time, and I am now excited to give a live walkthrough and answer any questions!</strong>"
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
