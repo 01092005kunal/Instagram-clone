@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../Supabase/client";
 
-const PostFooter = ({ post, username, isProfilePage }) => {
+const PostFooter = ({ post, username, isProfilePage, onCommentAdded }) => {
   const { user } = useAuth();
   const initialLikes = post?.likes || [];
   const [likesCount, setLikesCount] = useState(initialLikes.length);
@@ -82,6 +82,7 @@ const PostFooter = ({ post, username, isProfilePage }) => {
       if (error) throw error;
       setComments((prev) => [...prev, data]);
       setComment("");
+      onCommentAdded?.(data);
     } catch (err) {
       console.error("Comment submit error:", err.message);
     } finally {

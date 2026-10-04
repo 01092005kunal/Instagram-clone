@@ -3,6 +3,7 @@ import {
   Box,
   Container,
   Flex,
+  Divider,
   Grid,
   GridItem,
   Image,
@@ -16,6 +17,7 @@ import {
   ModalOverlay,
   Spinner,
   Text,
+  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState, useCallback } from "react";
@@ -25,6 +27,7 @@ import { FiSearch } from "react-icons/fi";
 import { Link as RouterLink } from "react-router-dom";
 import { supabase } from "../../Supabase/client";
 import PostFooter from "../../Components/FeedPosts/PostFooter";
+import { Comment } from "../../Components/Comment/Comment";
 
 const EXPLORE_SAMPLES = [
   {
@@ -84,6 +87,7 @@ const ExplorePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [modalComments, setModalComments] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchExploreItems = useCallback(async () => {
@@ -121,7 +125,25 @@ const ExplorePage = () => {
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
+    setModalComments(item.comments || []);
     onOpen();
+  };
+
+  const handleCommentAdded = (newComment) => {
+    setModalComments((prev) => [...prev, newComment]);
+    if (selectedItem) {
+      setSelectedItem((prev) => ({
+        ...prev,
+        comments: [...(prev.comments || []), newComment],
+      }));
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === selectedItem.id
+            ? { ...it, comments: [...(it.comments || []), newComment] }
+            : it
+        )
+      );
+    }
   };
 
   return (
@@ -256,18 +278,50 @@ const ExplorePage = () => {
                         {selectedItem.users?.username || "user"}
                       </Text>
                     </Flex>
-                    {selectedItem.caption && (
-                      <Flex gap={2} my={4}>
-                        <Text fontSize={"sm"} fontWeight={"bold"}>
-                          {selectedItem.users?.username || "user"}:
-                        </Text>
-                        <Text fontSize={"sm"} color={"gray.300"}>
-                          {selectedItem.caption}
-                        </Text>
-                      </Flex>
-                    )}
+
+                    {/* Scrollable Comments & Caption stream */}
+                    <VStack
+                      w={"full"}
+                      alignItems={"start"}
+                      maxH={"350px"}
+                      overflowY={"auto"}
+                      spacing={3}
+                      my={3}
+                      pr={1}
+                    >
+                      {/* Caption displayed as header item */}
+                      {selectedItem.caption && (
+                        <Comment
+                          createdAt="Just now"
+                          username={selectedItem.users?.username || "user"}
+                          profilePic={selectedItem.users?.profile_pic_url || "/profilepic.png"}
+                          text={selectedItem.caption}
+                        />
+                      )}
+
+                      {/* Full Comments List */}
+                      {modalComments.map((c, idx) => (
+                        <Comment
+                          key={c.id || idx}
+                          createdAt={
+                            c.created_at
+                              ? new Date(c.created_at).toLocaleDateString()
+                              : "Recently"
+                          }
+                          username={c.users?.username || c.username || "user"}
+                          profilePic={c.users?.profile_pic_url || c.profilePic || "/profilepic.png"}
+                          text={c.text}
+                        />
+                      ))}
+                    </VStack>
                   </Box>
-                  <PostFooter post={selectedItem} isProfilePage={true} />
+
+                  <Divider my={2} borderColor={"gray.800"} />
+                  <PostFooter
+                    post={{ ...selectedItem, comments: modalComments }}
+                    isProfilePage={true}
+                    onCommentAdded={handleCommentAdded}
+                  />
                 </Flex>
               </Flex>
             </ModalBody>
