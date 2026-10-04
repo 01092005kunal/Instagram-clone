@@ -1,7 +1,8 @@
-import { Box, Flex, Link, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Link, Spinner, Text, VStack, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import SuggestedHeader from "./SuggestedHeader";
 import SuggestedUser from "./SuggestedUser";
+import SeeAllModal from "./SeeAllModal";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../Supabase/client";
 
@@ -31,6 +32,7 @@ const FALLBACK_SUGGESTIONS = [
 
 const SuggestedUsers = () => {
   const { user } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [followingIds, setFollowingIds] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
@@ -92,6 +94,7 @@ const SuggestedUsers = () => {
           fontWeight={"bold"}
           _hover={{ color: "gray.400" }}
           cursor={"pointer"}
+          onClick={onOpen}
         >
           See All
         </Text>
@@ -122,6 +125,9 @@ const SuggestedUsers = () => {
           Kunal Mhatre
         </Link>
       </Box>
+
+      {/* See All Suggested Users Modal */}
+      <SeeAllModal isOpen={isOpen} onClose={onClose} />
     </VStack>
   );
 };
